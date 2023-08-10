@@ -1,6 +1,12 @@
 import GameManager from "./GameManager";
 import WebSocketManager from "./WebSocketManager";
 
+type ClickCell = {
+  type: "clickCell";
+  x: number;
+  y: number;
+};
+
 class EventManager {
   private gameManager: GameManager;
   private webSocketManager: WebSocketManager;
@@ -14,7 +20,22 @@ class EventManager {
 
   public start() {
     const onMessage = (connectionId: string, message: string) => {
-      return;
+      const event = JSON.parse(message) as ClickCell;
+
+      if (event.type === "clickCell") {
+        if (this.gameManager.addBall(event.x, event.y, connectionId)) {
+          this.gameManager.getPlayersIds().forEach((playerId) => {
+            this.webSocketManager.sendMessage(
+              playerId,
+              JSON.stringify({
+                type: "syncBoard",
+                cells: this.gameManager.getCells(),
+                cellsOwner: this.gameManager.getCellsOwner(),
+              })
+            );
+          });
+        }
+      }
     };
 
     const onNewConnection = (connectionId: string) => {

@@ -9,6 +9,11 @@ class GameManager {
   cellsOwner: Array<Array<string>>;
   playerColor: Map<string, string> = new Map();
   myPlayerId: string = "";
+  clickCellCallback: (x: number, y: number) => void = () => {};
+
+  public setClickCellCallback(callback: (x: number, y: number) => void) {
+    this.clickCellCallback = callback;
+  }
 
   public createPlayer(id: string, color: string, isMe: boolean) {
     this.playerColor.set(id, color);
@@ -45,10 +50,7 @@ class GameManager {
         row.classList.add("row");
 
         this.cellsDom[i][j].addEventListener("click", () => {
-          if (this.cells[i][j] < this.maxCellBalls[i][j]) {
-            this.cells[i][j]++;
-            this.cellsOwner[i][j] = this.myPlayerId;
-          }
+          this.clickCellCallback(i, j);
         });
 
         if (i == 0 && j == 0) {
@@ -142,6 +144,14 @@ class GameManager {
         }
       }
     }
+  }
+
+  public setCells(cells: Array<Array<number>>) {
+    this.cells = cells;
+  }
+
+  public setCellsOwner(cellsOwner: Array<Array<string>>) {
+    this.cellsOwner = cellsOwner;
   }
 }
 

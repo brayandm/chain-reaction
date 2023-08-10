@@ -9,6 +9,12 @@ type CreatePlayer = {
   isMe: boolean;
 };
 
+type syncBoard = {
+  type: "syncBoard";
+  cells: number[][];
+  cellsOwner: string[][];
+};
+
 class EventManager {
   private gameManager: GameManager;
   private webSocketManager: WebSocketManager;
@@ -20,10 +26,15 @@ class EventManager {
 
   public start() {
     const onMessage = (message: string) => {
-      const event = JSON.parse(message) as CreatePlayer;
+      const event = JSON.parse(message) as CreatePlayer | syncBoard;
 
       if (event.type === "createPlayer") {
         this.gameManager.createPlayer(event.id, event.color, event.isMe);
+      }
+
+      if (event.type === "syncBoard") {
+        this.gameManager.setCells(event.cells);
+        this.gameManager.setCellsOwner(event.cellsOwner);
       }
 
       console.log(event);
@@ -38,6 +49,18 @@ class EventManager {
         renderStep++;
         this.gameManager.render(renderStep);
       }, 1000 / 60);
+
+      const onClickCell = (x: number, y: number) => {
+        this.webSocketManager.sendMessage(
+          JSON.stringify({
+            type: "clickCell",
+            x: x,
+            y: y,
+          }),
+        );
+      };
+
+      this.gameManager.setClickCellCallback(onClickCell);
     };
 
     this.webSocketManager.setOnMessageCallback(onMessage);
