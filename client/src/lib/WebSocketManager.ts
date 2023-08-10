@@ -1,3 +1,4 @@
+"use client";
 class WebSocketManager {
   private webSocket: WebSocket;
   private onMessageCallback: (message: string) => void;

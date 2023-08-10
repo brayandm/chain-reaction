@@ -1,4 +1,4 @@
-import { BlobOptions } from "buffer";
+"use client";
 import GameManager from "./Game/GameManager";
 import WebSocketManager from "./WebSocketManager";
 

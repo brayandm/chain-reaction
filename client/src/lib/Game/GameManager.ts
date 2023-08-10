@@ -1,3 +1,5 @@
+"use client";
+
 class GameManager {
   cells: Array<Array<number>> = [];
   maxCellBalls: Array<Array<number>> = [];
