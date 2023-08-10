@@ -109,7 +109,7 @@ class GameManager {
           ball.classList.add("ball1");
           ball.style.backgroundColor =
             this.playerColor.get(this.cellsOwner[i][j]) || "black";
-          if (this.cells[i][j] == this.maxCellBalls[i][j]) {
+          if (this.cells[i][j] >= this.maxCellBalls[i][j]) {
             ball.style.transform = `translate(${3 - (renderStep % 5)}px, 0)`;
           }
           this.cellsDom[i][j].appendChild(ball);
@@ -121,7 +121,7 @@ class GameManager {
           ball.classList.add("ball2");
           ball.style.backgroundColor =
             this.playerColor.get(this.cellsOwner[i][j]) || "black";
-          if (this.cells[i][j] == this.maxCellBalls[i][j]) {
+          if (this.cells[i][j] >= this.maxCellBalls[i][j]) {
             ball.style.transform = `translate(${
               3 - ((renderStep + 2) % 5)
             }px, 0)`;
@@ -134,7 +134,7 @@ class GameManager {
           ball.classList.add("ball3");
           ball.style.backgroundColor =
             this.playerColor.get(this.cellsOwner[i][j]) || "black";
-          if (this.cells[i][j] == this.maxCellBalls[i][j]) {
+          if (this.cells[i][j] >= this.maxCellBalls[i][j]) {
             ball.style.transform = `translate(${
               3 - ((renderStep + 4) % 5)
             }px, 0)`;
@@ -151,7 +151,7 @@ class GameManager {
           this.cellsDom[i][j].classList.add("cell2");
         }
 
-        if (this.cells[i][j] == 3) {
+        if (this.cells[i][j] >= 3) {
           this.cellsDom[i][j].classList.add("cell3");
         }
       }

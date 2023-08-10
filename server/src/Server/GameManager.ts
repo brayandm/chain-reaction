@@ -7,6 +7,14 @@ class GameManager {
   width = 10;
   currentPlayer = "";
   playerOrder: Array<string> = [];
+  isReactioning = false;
+  reactionCallback: () => void = () => {
+    return;
+  };
+
+  setReactionCallback(callback: () => void) {
+    this.reactionCallback = callback;
+  }
 
   public getPlayerOrder() {
     return this.playerOrder;
@@ -99,39 +107,74 @@ class GameManager {
       y: number;
     }>
   ) {
+    const cellsTemp: Array<Array<number>> = [];
+
+    for (let i = 0; i < this.height; i++) {
+      cellsTemp.push([]);
+      for (let j = 0; j < this.width; j++) {
+        cellsTemp[i].push(0);
+      }
+    }
+
     reactions.forEach((reaction) => {
       if (reaction.x > 0) {
-        this.cells[reaction.x - 1][reaction.y]++;
         this.cells[reaction.x][reaction.y]--;
-        this.cellsOwner[reaction.x - 1][reaction.y] =
-          this.cellsOwner[reaction.x][reaction.y];
       }
 
       if (reaction.x < this.height - 1) {
-        this.cells[reaction.x + 1][reaction.y]++;
         this.cells[reaction.x][reaction.y]--;
-        this.cellsOwner[reaction.x + 1][reaction.y] =
-          this.cellsOwner[reaction.x][reaction.y];
       }
 
       if (reaction.y > 0) {
-        this.cells[reaction.x][reaction.y - 1]++;
         this.cells[reaction.x][reaction.y]--;
-        this.cellsOwner[reaction.x][reaction.y - 1] =
-          this.cellsOwner[reaction.x][reaction.y];
       }
 
       if (reaction.y < this.width - 1) {
-        this.cells[reaction.x][reaction.y + 1]++;
         this.cells[reaction.x][reaction.y]--;
-        this.cellsOwner[reaction.x][reaction.y + 1] =
-          this.cellsOwner[reaction.x][reaction.y];
-      }
-
-      if (this.cells[reaction.x][reaction.y] == 0) {
-        this.cellsOwner[reaction.x][reaction.y] = "";
       }
     });
+
+    reactions.forEach((reaction) => {
+      if (reaction.x > 0) {
+        cellsTemp[reaction.x - 1][reaction.y]++;
+      }
+
+      if (reaction.x < this.height - 1) {
+        cellsTemp[reaction.x + 1][reaction.y]++;
+      }
+
+      if (reaction.y > 0) {
+        cellsTemp[reaction.x][reaction.y - 1]++;
+      }
+
+      if (reaction.y < this.width - 1) {
+        cellsTemp[reaction.x][reaction.y + 1]++;
+      }
+    });
+
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (cellsTemp[i][j] > 0) {
+          this.cellsOwner[i][j] = this.getCurrentPlayer();
+        }
+        this.cells[i][j] += cellsTemp[i][j];
+
+        if (this.cells[i][j] == 0) {
+          this.cellsOwner[i][j] = "";
+        }
+      }
+    }
+
+    let sum = 0;
+
+    this.cells.forEach((row) => {
+      row.forEach((cell) => {
+        sum += cell;
+      });
+    });
+
+    console.log(sum);
+    console.log(this.cells);
 
     const reactions2: Array<{
       x: number;
@@ -150,11 +193,20 @@ class GameManager {
     }
 
     if (reactions2.length > 0) {
-      this.reaction(reactions2);
+      setTimeout(() => {
+        this.reaction(reactions2);
+        this.reactionCallback();
+      }, 300);
+    } else {
+      this.isReactioning = false;
     }
   }
 
   public addBall(x: number, y: number, playerId: string) {
+    if (this.isReactioning) {
+      return false;
+    }
+
     if (this.cellsOwner[x][y] != playerId && this.cellsOwner[x][y] != "") {
       return false;
     }
@@ -170,6 +222,7 @@ class GameManager {
     this.cells[x][y]++;
 
     if (this.cells[x][y] > this.maxCellBalls[x][y]) {
+      this.isReactioning = true;
       this.reaction([
         {
           x,

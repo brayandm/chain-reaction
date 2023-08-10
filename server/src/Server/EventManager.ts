@@ -113,6 +113,21 @@ class EventManager {
           playerId: this.gameManager.getCurrentPlayer(),
         })
       );
+
+      const reactionCallback = () => {
+        this.gameManager.getPlayersIds().forEach((playerId) => {
+          this.webSocketManager.sendMessage(
+            playerId,
+            JSON.stringify({
+              type: "syncBoard",
+              cells: this.gameManager.getCells(),
+              cellsOwner: this.gameManager.getCellsOwner(),
+            })
+          );
+        });
+      };
+
+      this.gameManager.setReactionCallback(reactionCallback);
     };
 
     const onCloseConnection = (connectionId: string) => {
