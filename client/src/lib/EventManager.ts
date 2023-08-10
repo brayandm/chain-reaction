@@ -18,6 +18,8 @@ class EventManager {
     this.webSocketManager.setOnMessageCallback(onMessage);
     this.webSocketManager.setOnOpenConnectionCallback(onOpenConnection);
   }
+
+  public stop() {}
 }
 
 export default EventManager;
