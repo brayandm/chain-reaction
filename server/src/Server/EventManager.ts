@@ -105,6 +105,14 @@ class EventManager {
           })
         );
       });
+
+      this.webSocketManager.sendMessage(
+        connectionId,
+        JSON.stringify({
+          type: "whoPlay",
+          playerId: this.gameManager.getCurrentPlayer(),
+        })
+      );
     };
 
     const onCloseConnection = (connectionId: string) => {

@@ -93,11 +93,68 @@ class GameManager {
     }
   }
 
-  public addBall(x: number, y: number, playerId: string) {
-    if (this.cells[x][y] == this.maxCellBalls[x][y]) {
-      return false;
+  private reaction(
+    reactions: Array<{
+      x: number;
+      y: number;
+    }>
+  ) {
+    reactions.forEach((reaction) => {
+      if (reaction.x > 0) {
+        this.cells[reaction.x - 1][reaction.y]++;
+        this.cells[reaction.x][reaction.y]--;
+        this.cellsOwner[reaction.x - 1][reaction.y] =
+          this.cellsOwner[reaction.x][reaction.y];
+      }
+
+      if (reaction.x < this.height - 1) {
+        this.cells[reaction.x + 1][reaction.y]++;
+        this.cells[reaction.x][reaction.y]--;
+        this.cellsOwner[reaction.x + 1][reaction.y] =
+          this.cellsOwner[reaction.x][reaction.y];
+      }
+
+      if (reaction.y > 0) {
+        this.cells[reaction.x][reaction.y - 1]++;
+        this.cells[reaction.x][reaction.y]--;
+        this.cellsOwner[reaction.x][reaction.y - 1] =
+          this.cellsOwner[reaction.x][reaction.y];
+      }
+
+      if (reaction.y < this.width - 1) {
+        this.cells[reaction.x][reaction.y + 1]++;
+        this.cells[reaction.x][reaction.y]--;
+        this.cellsOwner[reaction.x][reaction.y + 1] =
+          this.cellsOwner[reaction.x][reaction.y];
+      }
+
+      if (this.cells[reaction.x][reaction.y] == 0) {
+        this.cellsOwner[reaction.x][reaction.y] = "";
+      }
+    });
+
+    const reactions2: Array<{
+      x: number;
+      y: number;
+    }> = [];
+
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.cells[i][j] > this.maxCellBalls[i][j]) {
+          reactions2.push({
+            x: i,
+            y: j,
+          });
+        }
+      }
     }
 
+    if (reactions2.length > 0) {
+      this.reaction(reactions2);
+    }
+  }
+
+  public addBall(x: number, y: number, playerId: string) {
     if (this.cellsOwner[x][y] != playerId && this.cellsOwner[x][y] != "") {
       return false;
     }
@@ -111,6 +168,16 @@ class GameManager {
     }
 
     this.cells[x][y]++;
+
+    if (this.cells[x][y] > this.maxCellBalls[x][y]) {
+      this.reaction([
+        {
+          x,
+          y,
+        },
+      ]);
+    }
+
     this.cellsOwner[x][y] = playerId;
 
     this.nextPlayer();
