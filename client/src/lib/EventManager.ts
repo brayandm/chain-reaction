@@ -15,6 +15,10 @@ class EventManager {
 
     const onOpenConnection = () => {
       this.gameManager.addElementsToDom();
+
+      setInterval(() => {
+        this.gameManager.render();
+      }, 1000 / 60);
     };
 
     this.webSocketManager.setOnMessageCallback(onMessage);

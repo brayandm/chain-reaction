@@ -2,27 +2,35 @@ class GameManager {
   cells: Array<Array<number>>;
   cellsDom: Array<Array<HTMLElement>>;
   boardDom: HTMLElement;
+  width = 10;
+  height = 14;
+  balls: Array<HTMLElement>;
 
   constructor() {
     this.cells = [];
     this.cellsDom = [];
+    this.balls = [];
 
     this.boardDom = document.createElement("div");
     this.boardDom.id = "board";
     this.boardDom.classList.add("board");
 
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < this.height; i++) {
       this.cells.push([]);
       this.cellsDom.push([]);
 
       const row = document.createElement("div");
 
-      for (let j = 0; j < 10; j++) {
+      for (let j = 0; j < this.width; j++) {
         this.cells[i].push(0);
         this.cellsDom[i].push(document.createElement("div"));
         this.cellsDom[i][j].classList.add("cell");
         row.appendChild(this.cellsDom[i][j]);
         row.classList.add("row");
+
+        this.cellsDom[i][j].addEventListener("click", () => {
+          this.cells[i][j]++;
+        });
       }
 
       this.boardDom.appendChild(row);
@@ -31,6 +39,53 @@ class GameManager {
 
   public addElementsToDom() {
     document.body.appendChild(this.boardDom);
+  }
+
+  public render() {
+    for (let i = 0; i < this.balls.length; i++) {
+      this.balls[i].remove();
+    }
+
+    this.balls = [];
+
+    console.log("render");
+
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        this.cellsDom[i][j].classList.remove("cell1", "cell2", "cell3");
+
+        if (this.cells[i][j] > 0) {
+          const ball = document.createElement("div");
+          ball.classList.add("ball1");
+          this.cellsDom[i][j].appendChild(ball);
+          this.balls.push(ball);
+        }
+        if (this.cells[i][j] > 1) {
+          const ball = document.createElement("div");
+          ball.classList.add("ball2");
+          this.cellsDom[i][j].appendChild(ball);
+          this.balls.push(ball);
+        }
+        if (this.cells[i][j] > 2) {
+          const ball = document.createElement("div");
+          ball.classList.add("ball3");
+          this.cellsDom[i][j].appendChild(ball);
+          this.balls.push(ball);
+        }
+
+        if (this.cells[i][j] == 1) {
+          this.cellsDom[i][j].classList.add("cell1");
+        }
+
+        if (this.cells[i][j] == 2) {
+          this.cellsDom[i][j].classList.add("cell2");
+        }
+
+        if (this.cells[i][j] == 3) {
+          this.cellsDom[i][j].classList.add("cell3");
+        }
+      }
+    }
   }
 }
 
