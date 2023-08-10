@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  frontend-nodejs:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - chain-reaction
+    command: npm run start
+
+networks:
+  chain-reaction:
+    driver: bridge
