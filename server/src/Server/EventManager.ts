@@ -83,6 +83,17 @@ class EventManager {
           );
         }
       });
+
+      this.gameManager.getPlayersIds().forEach((playerId) => {
+        this.webSocketManager.sendMessage(
+          playerId,
+          JSON.stringify({
+            type: "syncBoard",
+            cells: this.gameManager.getCells(),
+            cellsOwner: this.gameManager.getCellsOwner(),
+          })
+        );
+      });
     };
 
     const onCloseConnection = (connectionId: string) => {
@@ -91,6 +102,16 @@ class EventManager {
         this.colorsPool.push(color);
       }
       this.gameManager.removePlayer(connectionId);
+      this.gameManager.getPlayersIds().forEach((playerId) => {
+        this.webSocketManager.sendMessage(
+          playerId,
+          JSON.stringify({
+            type: "syncBoard",
+            cells: this.gameManager.getCells(),
+            cellsOwner: this.gameManager.getCellsOwner(),
+          })
+        );
+      });
     };
 
     this.webSocketManager.setOnMessageCallback(onMessage);

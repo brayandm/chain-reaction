@@ -52,6 +52,7 @@ class GameManager {
 
   public removePlayer(id: string) {
     this.players.delete(id);
+    this.deleteBallsFromPlayer(id);
   }
 
   public addBall(x: number, y: number, playerId: string) {
@@ -75,6 +76,17 @@ class GameManager {
 
   public getCellsOwner() {
     return this.cellsOwner;
+  }
+
+  private deleteBallsFromPlayer(playerId: string) {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.cellsOwner[i][j] == playerId) {
+          this.cells[i][j] = 0;
+          this.cellsOwner[i][j] = "";
+        }
+      }
+    }
   }
 }
 
