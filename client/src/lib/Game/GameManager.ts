@@ -1,5 +1,6 @@
 class GameManager {
   cells: Array<Array<number>>;
+  maxCellBalls: Array<Array<number>>;
   cellsDom: Array<Array<HTMLElement>>;
   boardDom: HTMLElement;
   width = 10;
@@ -8,6 +9,7 @@ class GameManager {
 
   constructor() {
     this.cells = [];
+    this.maxCellBalls = [];
     this.cellsDom = [];
     this.balls = [];
 
@@ -17,6 +19,7 @@ class GameManager {
 
     for (let i = 0; i < this.height; i++) {
       this.cells.push([]);
+      this.maxCellBalls.push([]);
       this.cellsDom.push([]);
 
       const row = document.createElement("div");
@@ -29,26 +32,48 @@ class GameManager {
         row.classList.add("row");
 
         this.cellsDom[i][j].addEventListener("click", () => {
-          this.cells[i][j]++;
+          if (this.cells[i][j] < this.maxCellBalls[i][j]) {
+            this.cells[i][j]++;
+          }
         });
+
+        if (i == 0 && j == 0) {
+          this.maxCellBalls[i][j] = 1;
+        } else if (i == 0 && j == this.width - 1) {
+          this.maxCellBalls[i][j] = 1;
+        } else if (i == this.height - 1 && j == 0) {
+          this.maxCellBalls[i][j] = 1;
+        } else if (i == this.height - 1 && j == this.width - 1) {
+          this.maxCellBalls[i][j] = 1;
+        } else if (
+          i == 0 ||
+          j == 0 ||
+          i == this.height - 1 ||
+          j == this.width - 1
+        ) {
+          this.maxCellBalls[i][j] = 2;
+        } else {
+          this.maxCellBalls[i][j] = 3;
+        }
       }
 
       this.boardDom.appendChild(row);
     }
+
+    console.log(this.maxCellBalls);
+    console.log(this.cells);
   }
 
   public addElementsToDom() {
     document.body.appendChild(this.boardDom);
   }
 
-  public render() {
+  public render(renderStep: number) {
     for (let i = 0; i < this.balls.length; i++) {
       this.balls[i].remove();
     }
 
     this.balls = [];
-
-    console.log("render");
 
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
@@ -57,18 +82,32 @@ class GameManager {
         if (this.cells[i][j] > 0) {
           const ball = document.createElement("div");
           ball.classList.add("ball1");
+          if (this.cells[i][j] == this.maxCellBalls[i][j]) {
+            ball.style.transform = `translate(${3 - (renderStep % 5)}px, 0)`;
+          }
           this.cellsDom[i][j].appendChild(ball);
           this.balls.push(ball);
         }
+
         if (this.cells[i][j] > 1) {
           const ball = document.createElement("div");
           ball.classList.add("ball2");
+          if (this.cells[i][j] == this.maxCellBalls[i][j]) {
+            ball.style.transform = `translate(${
+              3 - ((renderStep + 2) % 5)
+            }px, 0)`;
+          }
           this.cellsDom[i][j].appendChild(ball);
           this.balls.push(ball);
         }
         if (this.cells[i][j] > 2) {
           const ball = document.createElement("div");
           ball.classList.add("ball3");
+          if (this.cells[i][j] == this.maxCellBalls[i][j]) {
+            ball.style.transform = `translate(${
+              3 - ((renderStep + 4) % 5)
+            }px, 0)`;
+          }
           this.cellsDom[i][j].appendChild(ball);
           this.balls.push(ball);
         }

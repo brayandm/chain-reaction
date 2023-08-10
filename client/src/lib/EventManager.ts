@@ -16,8 +16,11 @@ class EventManager {
     const onOpenConnection = () => {
       this.gameManager.addElementsToDom();
 
+      let renderStep = 0;
+
       setInterval(() => {
-        this.gameManager.render();
+        renderStep++;
+        this.gameManager.render(renderStep);
       }, 1000 / 60);
     };
 
