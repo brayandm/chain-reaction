@@ -11,22 +11,9 @@ services:
     ports:
       - ${WEBSOCKET_PORT}:${WEBSOCKET_PORT}
     networks:
-      - xball-local
+      - chain-reaction-local
     command: nodemon src/Server/WebSocketServer.ts
 
-  aimanager:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    restart: always
-    volumes:
-      - .:/app
-    networks:
-      - xball-local
-    command: nodemon src/Ai/AiManager.ts
-    depends_on:
-      - nodejs
-
 networks:
-  xball-local:
+  chain-reaction-local:
     driver: bridge

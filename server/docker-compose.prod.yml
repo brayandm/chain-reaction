@@ -9,9 +9,9 @@ services:
     ports:
       - ${WEBSOCKET_PORT}:${WEBSOCKET_PORT}
     networks:
-      - xball
+      - chain-reaction
     command: npx ts-node src/Server/WebSocketServer.ts
 
 networks:
-  xball:
+  chain-reaction:
     driver: bridge
