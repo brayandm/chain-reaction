@@ -20,6 +20,9 @@ class EventManager {
 
   public start() {
     const onMessage = (connectionId: string, message: string) => {
+      console.log(this.gameManager.getPlayerOrder());
+      console.log(this.gameManager.getCurrentPlayer());
+
       const event = JSON.parse(message) as ClickCell;
 
       if (event.type === "clickCell") {
@@ -38,7 +41,7 @@ class EventManager {
               playerId,
               JSON.stringify({
                 type: "whoPlay",
-                playerId: playerId,
+                playerId: this.gameManager.getCurrentPlayer(),
               })
             );
           });

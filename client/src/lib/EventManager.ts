@@ -15,6 +15,11 @@ type syncBoard = {
   cellsOwner: string[][];
 };
 
+type whoPlay = {
+  type: "whoPlay";
+  playerId: string;
+};
+
 class EventManager {
   private gameManager: GameManager;
   private webSocketManager: WebSocketManager;
@@ -26,7 +31,7 @@ class EventManager {
 
   public start() {
     const onMessage = (message: string) => {
-      const event = JSON.parse(message) as CreatePlayer | syncBoard;
+      const event = JSON.parse(message) as CreatePlayer | syncBoard | whoPlay;
 
       if (event.type === "createPlayer") {
         this.gameManager.createPlayer(event.id, event.color, event.isMe);
@@ -35,6 +40,10 @@ class EventManager {
       if (event.type === "syncBoard") {
         this.gameManager.setCells(event.cells);
         this.gameManager.setCellsOwner(event.cellsOwner);
+      }
+
+      if (event.type === "whoPlay") {
+        this.gameManager.setCurrentPlayer(event.playerId);
       }
 
       console.log(event);

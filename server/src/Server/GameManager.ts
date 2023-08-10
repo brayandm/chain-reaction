@@ -8,6 +8,10 @@ class GameManager {
   currentPlayer = "";
   playerOrder: Array<string> = [];
 
+  public getPlayerOrder() {
+    return this.playerOrder;
+  }
+
   constructor() {
     this.cells = [];
     this.cellsOwner = [];
@@ -68,7 +72,10 @@ class GameManager {
   }
 
   public getCurrentPlayer() {
-    return this.currentPlayer;
+    if (this.playerOrder.includes(this.currentPlayer)) {
+      return this.currentPlayer;
+    }
+    return "";
   }
 
   private nextPlayer() {
@@ -95,7 +102,11 @@ class GameManager {
       return false;
     }
 
-    if (playerId !== this.currentPlayer) {
+    if (this.getCurrentPlayer() == "") {
+      this.currentPlayer = playerId;
+    }
+
+    if (playerId !== this.getCurrentPlayer()) {
       return false;
     }
 

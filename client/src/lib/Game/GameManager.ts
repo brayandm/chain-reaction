@@ -10,6 +10,7 @@ class GameManager {
   playerColor: Map<string, string> = new Map();
   myPlayerId: string = "";
   clickCellCallback: (x: number, y: number) => void = () => {};
+  playerTurnDom: HTMLElement;
 
   public setClickCellCallback(callback: (x: number, y: number) => void) {
     this.clickCellCallback = callback;
@@ -22,6 +23,12 @@ class GameManager {
     }
   }
 
+  public setCurrentPlayer(playerId: string) {
+    this.playerTurnDom.style.backgroundColor = this.playerColor.get(
+      playerId,
+    ) as string;
+  }
+
   constructor() {
     this.cells = [];
     this.cellsOwner = [];
@@ -30,8 +37,13 @@ class GameManager {
     this.balls = [];
 
     this.boardDom = document.createElement("div");
-    this.boardDom.id = "board";
     this.boardDom.classList.add("board");
+
+    this.playerTurnDom = document.createElement("div");
+
+    this.playerTurnDom.classList.add("playerTurn");
+
+    this.boardDom.appendChild(this.playerTurnDom);
 
     for (let i = 0; i < this.height; i++) {
       this.cells.push([]);
