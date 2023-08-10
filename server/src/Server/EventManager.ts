@@ -33,6 +33,14 @@ class EventManager {
                 cellsOwner: this.gameManager.getCellsOwner(),
               })
             );
+
+            this.webSocketManager.sendMessage(
+              playerId,
+              JSON.stringify({
+                type: "whoPlay",
+                playerId: playerId,
+              })
+            );
           });
         }
       }

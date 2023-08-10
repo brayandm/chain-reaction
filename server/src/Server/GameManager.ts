@@ -5,6 +5,8 @@ class GameManager {
   maxCellBalls: Array<Array<number>> = [];
   height = 14;
   width = 10;
+  currentPlayer = "";
+  playerOrder: Array<string> = [];
 
   constructor() {
     this.cells = [];
@@ -44,6 +46,11 @@ class GameManager {
 
   public createPlayer(id: string, color: string) {
     this.players.set(id, color);
+    this.playerOrder.push(id);
+
+    if (this.currentPlayer == "") {
+      this.currentPlayer = id;
+    }
   }
 
   public getPlayersIds() {
@@ -52,7 +59,31 @@ class GameManager {
 
   public removePlayer(id: string) {
     this.players.delete(id);
+    this.playerOrder = this.playerOrder.filter((playerId) => playerId !== id);
     this.deleteBallsFromPlayer(id);
+
+    if (this.currentPlayer == id) {
+      this.nextPlayer();
+    }
+  }
+
+  public getCurrentPlayer() {
+    return this.currentPlayer;
+  }
+
+  private nextPlayer() {
+    if (this.playerOrder.length == 0) {
+      this.currentPlayer = "";
+      return;
+    }
+
+    for (let i = 0; i < this.playerOrder.length; i++) {
+      if (this.playerOrder[i] == this.currentPlayer) {
+        this.currentPlayer =
+          this.playerOrder[(i + 1) % this.playerOrder.length];
+        break;
+      }
+    }
   }
 
   public addBall(x: number, y: number, playerId: string) {
@@ -64,8 +95,14 @@ class GameManager {
       return false;
     }
 
+    if (playerId !== this.currentPlayer) {
+      return false;
+    }
+
     this.cells[x][y]++;
     this.cellsOwner[x][y] = playerId;
+
+    this.nextPlayer();
 
     return true;
   }
