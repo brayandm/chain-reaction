@@ -31,12 +31,14 @@ class GameManager {
     for (let i = 0; i < this.height; i++) {
       this.cells.push([]);
       this.maxCellBalls.push([]);
+      this.cellsOwner.push([]);
       this.cellsDom.push([]);
 
       const row = document.createElement("div");
 
       for (let j = 0; j < this.width; j++) {
         this.cells[i].push(0);
+        this.cellsOwner[i].push("");
         this.cellsDom[i].push(document.createElement("div"));
         this.cellsDom[i][j].classList.add("cell");
         row.appendChild(this.cellsDom[i][j]);
@@ -45,6 +47,7 @@ class GameManager {
         this.cellsDom[i][j].addEventListener("click", () => {
           if (this.cells[i][j] < this.maxCellBalls[i][j]) {
             this.cells[i][j]++;
+            this.cellsOwner[i][j] = this.myPlayerId;
           }
         });
 
@@ -90,6 +93,8 @@ class GameManager {
         if (this.cells[i][j] > 0) {
           const ball = document.createElement("div");
           ball.classList.add("ball1");
+          ball.style.backgroundColor =
+            this.playerColor.get(this.cellsOwner[i][j]) || "black";
           if (this.cells[i][j] == this.maxCellBalls[i][j]) {
             ball.style.transform = `translate(${3 - (renderStep % 5)}px, 0)`;
           }
@@ -100,6 +105,8 @@ class GameManager {
         if (this.cells[i][j] > 1) {
           const ball = document.createElement("div");
           ball.classList.add("ball2");
+          ball.style.backgroundColor =
+            this.playerColor.get(this.cellsOwner[i][j]) || "black";
           if (this.cells[i][j] == this.maxCellBalls[i][j]) {
             ball.style.transform = `translate(${
               3 - ((renderStep + 2) % 5)
@@ -111,6 +118,8 @@ class GameManager {
         if (this.cells[i][j] > 2) {
           const ball = document.createElement("div");
           ball.classList.add("ball3");
+          ball.style.backgroundColor =
+            this.playerColor.get(this.cellsOwner[i][j]) || "black";
           if (this.cells[i][j] == this.maxCellBalls[i][j]) {
             ball.style.transform = `translate(${
               3 - ((renderStep + 4) % 5)
