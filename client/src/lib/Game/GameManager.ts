@@ -59,9 +59,6 @@ class GameManager {
 
       this.boardDom.appendChild(row);
     }
-
-    console.log(this.maxCellBalls);
-    console.log(this.cells);
   }
 
   public addElementsToDom() {
