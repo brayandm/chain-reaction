@@ -1,16 +1,16 @@
 class GameManager {
-  cells: Array<Array<number>>;
-  maxCellBalls: Array<Array<number>>;
-  cellsDom: Array<Array<HTMLElement>>;
-  boardDom: HTMLElement;
+  cells: Array<Array<number>> = [];
+  maxCellBalls: Array<Array<number>> = [];
+  cellsDom: Array<Array<HTMLElement>> = [];
+  boardDom: HTMLElement | null = null;
   width = 10;
   height = 14;
-  balls: Array<HTMLElement>;
-  cellsOwner: Array<Array<string>>;
+  balls: Array<HTMLElement> = [];
+  cellsOwner: Array<Array<string>> = [];
   playerColor: Map<string, string> = new Map();
   myPlayerId: string = "";
   clickCellCallback: (x: number, y: number) => void = () => {};
-  playerTurnDom: HTMLElement;
+  playerTurnDom: HTMLElement | null = null;
 
   public setClickCellCallback(callback: (x: number, y: number) => void) {
     this.clickCellCallback = callback;
@@ -24,12 +24,14 @@ class GameManager {
   }
 
   public setCurrentPlayer(playerId: string) {
-    this.playerTurnDom.style.backgroundColor = this.playerColor.get(
+    this.playerTurnDom!.style.backgroundColor = this.playerColor.get(
       playerId,
     ) as string;
   }
 
-  constructor() {
+  constructor() {}
+
+  public init() {
     this.cells = [];
     this.cellsOwner = [];
     this.maxCellBalls = [];
@@ -90,7 +92,7 @@ class GameManager {
   }
 
   public addElementsToDom() {
-    document.body.appendChild(this.boardDom);
+    document.body.appendChild(this.boardDom!);
   }
 
   public render(renderStep: number) {
