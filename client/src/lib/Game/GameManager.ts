@@ -6,9 +6,20 @@ class GameManager {
   width = 10;
   height = 14;
   balls: Array<HTMLElement>;
+  cellsOwner: Array<Array<string>>;
+  playerColor: Map<string, string> = new Map();
+  myPlayerId: string = "";
+
+  public createPlayer(id: string, color: string, isMe: boolean) {
+    this.playerColor.set(id, color);
+    if (isMe) {
+      this.myPlayerId = id;
+    }
+  }
 
   constructor() {
     this.cells = [];
+    this.cellsOwner = [];
     this.maxCellBalls = [];
     this.cellsDom = [];
     this.balls = [];
