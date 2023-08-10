@@ -13,7 +13,9 @@ class EventManager {
   public start() {
     const onMessage = (message: string) => {};
 
-    const onOpenConnection = () => {};
+    const onOpenConnection = () => {
+      this.gameManager.addElementsToDom();
+    };
 
     this.webSocketManager.setOnMessageCallback(onMessage);
     this.webSocketManager.setOnOpenConnectionCallback(onOpenConnection);
