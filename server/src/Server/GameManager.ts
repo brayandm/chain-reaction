@@ -192,15 +192,15 @@ class GameManager {
       }
     }
 
-    if (reactions2.length > 0) {
-      setTimeout(() => {
+    setTimeout(() => {
+      if (reactions2.length > 0) {
         this.reaction(reactions2);
         this.reactionCallback();
-      }, 300);
-    } else {
-      this.isReactioning = false;
-      this.nextPlayer();
-    }
+      } else {
+        this.isReactioning = false;
+        this.nextPlayer();
+      }
+    }, 300);
   }
 
   public addBall(x: number, y: number, playerId: string) {
