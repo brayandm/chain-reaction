@@ -10,7 +10,7 @@ type ClickCell = {
 class EventManager {
   private gameManager: GameManager;
   private webSocketManager: WebSocketManager;
-  private colorsPool: string[] = ["red", "blue", "purple"];
+  private colorsPool: string[] = ["green", "purple", "red", "blue"];
   private playerColor: Map<string, string> = new Map();
 
   constructor(gameManager: GameManager, webSocketManager: WebSocketManager) {
