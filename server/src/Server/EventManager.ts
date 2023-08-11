@@ -50,71 +50,52 @@ class EventManager {
     };
 
     const onNewConnection = (connectionId: string) => {
-      const color = this.colorsPool.pop();
-      if (color) {
-        this.playerColor.set(connectionId, color);
-      }
-
-      this.webSocketManager.sendMessage(
-        connectionId,
-        JSON.stringify({
-          type: "createPlayer",
-          id: connectionId,
-          color: color,
-          isMe: true,
-        })
-      );
-
-      this.gameManager.createPlayer(connectionId, color);
-
-      this.gameManager.getPlayersIds().forEach((playerId) => {
-        if (playerId !== connectionId) {
-          this.webSocketManager.sendMessage(
-            playerId,
-            JSON.stringify({
-              type: "createPlayer",
-              id: connectionId,
-              color: color,
-              isMe: false,
-            })
-          );
+      setTimeout(() => {
+        const color = this.colorsPool.pop();
+        if (color) {
+          this.playerColor.set(connectionId, color);
         }
-      });
 
-      this.gameManager.getPlayersIds().forEach((playerId) => {
-        if (playerId !== connectionId) {
-          this.webSocketManager.sendMessage(
-            connectionId,
-            JSON.stringify({
-              type: "createPlayer",
-              id: playerId,
-              color: this.playerColor.get(playerId),
-              isMe: false,
-            })
-          );
-        }
-      });
-
-      this.gameManager.getPlayersIds().forEach((playerId) => {
         this.webSocketManager.sendMessage(
-          playerId,
+          connectionId,
           JSON.stringify({
-            type: "syncBoard",
-            cells: this.gameManager.getCells(),
-            cellsOwner: this.gameManager.getCellsOwner(),
+            type: "createPlayer",
+            id: connectionId,
+            color: color,
+            isMe: true,
           })
         );
-      });
 
-      this.webSocketManager.sendMessage(
-        connectionId,
-        JSON.stringify({
-          type: "whoPlay",
-          playerId: this.gameManager.getCurrentPlayer(),
-        })
-      );
+        this.gameManager.createPlayer(connectionId, color);
 
-      const reactionCallback = () => {
+        this.gameManager.getPlayersIds().forEach((playerId) => {
+          if (playerId !== connectionId) {
+            this.webSocketManager.sendMessage(
+              playerId,
+              JSON.stringify({
+                type: "createPlayer",
+                id: connectionId,
+                color: color,
+                isMe: false,
+              })
+            );
+          }
+        });
+
+        this.gameManager.getPlayersIds().forEach((playerId) => {
+          if (playerId !== connectionId) {
+            this.webSocketManager.sendMessage(
+              connectionId,
+              JSON.stringify({
+                type: "createPlayer",
+                id: playerId,
+                color: this.playerColor.get(playerId),
+                isMe: false,
+              })
+            );
+          }
+        });
+
         this.gameManager.getPlayersIds().forEach((playerId) => {
           this.webSocketManager.sendMessage(
             playerId,
@@ -125,9 +106,30 @@ class EventManager {
             })
           );
         });
-      };
 
-      this.gameManager.setReactionCallback(reactionCallback);
+        this.webSocketManager.sendMessage(
+          connectionId,
+          JSON.stringify({
+            type: "whoPlay",
+            playerId: this.gameManager.getCurrentPlayer(),
+          })
+        );
+
+        const reactionCallback = () => {
+          this.gameManager.getPlayersIds().forEach((playerId) => {
+            this.webSocketManager.sendMessage(
+              playerId,
+              JSON.stringify({
+                type: "syncBoard",
+                cells: this.gameManager.getCells(),
+                cellsOwner: this.gameManager.getCellsOwner(),
+              })
+            );
+          });
+        };
+
+        this.gameManager.setReactionCallback(reactionCallback);
+      }, 3000);
     };
 
     const onCloseConnection = (connectionId: string) => {
