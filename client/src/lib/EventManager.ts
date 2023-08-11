@@ -50,28 +50,28 @@ class EventManager {
     };
 
     const onOpenConnection = () => {
-      setTimeout(() => {
-        this.gameManager.addElementsToDom();
+      this.gameManager.init();
 
-        let renderStep = 0;
+      this.gameManager.addElementsToDom();
 
-        setInterval(() => {
-          renderStep++;
-          this.gameManager.render(renderStep);
-        }, 1000 / 60);
+      let renderStep = 0;
 
-        const onClickCell = (x: number, y: number) => {
-          this.webSocketManager.sendMessage(
-            JSON.stringify({
-              type: "clickCell",
-              x: x,
-              y: y,
-            }),
-          );
-        };
+      setInterval(() => {
+        renderStep++;
+        this.gameManager.render(renderStep);
+      }, 1000 / 60);
 
-        this.gameManager.setClickCellCallback(onClickCell);
-      }, 3000);
+      const onClickCell = (x: number, y: number) => {
+        this.webSocketManager.sendMessage(
+          JSON.stringify({
+            type: "clickCell",
+            x: x,
+            y: y,
+          }),
+        );
+      };
+
+      this.gameManager.setClickCellCallback(onClickCell);
     };
 
     this.webSocketManager.setOnMessageCallback(onMessage);
