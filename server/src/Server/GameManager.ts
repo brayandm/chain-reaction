@@ -78,6 +78,7 @@ class GameManager {
     this.playerOrder = this.playerOrder.filter((playerId) => playerId !== id);
     this.deleteBallsFromPlayer(id);
     this.playersTurns.delete(id);
+    this.playersName.delete(id);
 
     if (this.currentPlayer == id) {
       this.nextPlayer();

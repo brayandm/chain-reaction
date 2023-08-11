@@ -3,10 +3,10 @@
 import EventManager from "@/lib/EventManager";
 import GameManager from "@/lib/Game/GameManager";
 import WebSocketManager from "@/lib/WebSocketManager";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function Game() {
-  const [name, setName] = useState("");
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const [isSumitted, setIsSubmitted] = useState(false);
 
@@ -29,10 +29,11 @@ export default function Game() {
     };
   }, [eventManager]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
+    const name = nameRef.current?.value || "";
     eventManager.sendName(name);
     setIsSubmitted(true);
-  };
+  }, [eventManager]);
 
   return (
     <>
@@ -47,13 +48,7 @@ export default function Game() {
         >
           <h1>Home</h1>
           <p>Enter your name</p>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <input type="text" id="name" name="name" ref={nameRef} />
           <button
             onClick={() => {
               handleSubmit();
