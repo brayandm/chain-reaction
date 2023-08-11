@@ -11,8 +11,10 @@ class GameManager {
   cellsOwner: Array<Array<string>> = [];
   playerColor: Map<string, string> = new Map();
   myPlayerId: string = "";
+  playersName: Array<{ id: string; name: string }> = [];
   clickCellCallback: (x: number, y: number) => void = () => {};
   playerTurnDom: HTMLElement | null = null;
+  playerNamesBoard: HTMLElement | null = null;
 
   public setClickCellCallback(callback: (x: number, y: number) => void) {
     this.clickCellCallback = callback;
@@ -42,6 +44,12 @@ class GameManager {
 
     this.boardDom = document.createElement("div");
     this.boardDom.classList.add("board");
+
+    this.playerNamesBoard = document.createElement("div");
+
+    this.playerNamesBoard.classList.add("playerNamesBoard");
+
+    this.boardDom.appendChild(this.playerNamesBoard);
 
     this.playerTurnDom = document.createElement("div");
 
@@ -97,7 +105,24 @@ class GameManager {
     document.body.appendChild(this.boardDom!);
   }
 
+  public setPlayersName(names: Array<{ id: string; name: string }>) {
+    this.playersName = names;
+    console.log(this.playersName);
+  }
+
   public render(renderStep: number) {
+    this.playerNamesBoard!.innerHTML = "";
+
+    this.playersName.forEach((player) => {
+      const playerDom = document.createElement("div");
+      playerDom.classList.add("playerName");
+      console.log(this.playerColor.get(player.id));
+      console.log(this.playerColor);
+      playerDom.style.backgroundColor = this.playerColor.get(player.id) || "";
+      playerDom.innerHTML = player.name;
+      this.playerNamesBoard!.appendChild(playerDom);
+    });
+
     for (let i = 0; i < this.balls.length; i++) {
       this.balls[i].remove();
     }

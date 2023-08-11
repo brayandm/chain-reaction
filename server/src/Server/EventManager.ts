@@ -7,6 +7,11 @@ type ClickCell = {
   y: number;
 };
 
+type setName = {
+  type: "setName";
+  name: string;
+};
+
 class EventManager {
   private gameManager: GameManager;
   private webSocketManager: WebSocketManager;
@@ -23,7 +28,7 @@ class EventManager {
       console.log(this.gameManager.getPlayerOrder());
       console.log(this.gameManager.getCurrentPlayer());
 
-      const event = JSON.parse(message) as ClickCell;
+      const event = JSON.parse(message) as ClickCell | setName;
 
       if (event.type === "clickCell") {
         if (await this.gameManager.addBall(event.x, event.y, connectionId)) {
@@ -46,6 +51,34 @@ class EventManager {
             );
           });
         }
+      }
+
+      if (event.type === "setName") {
+        this.gameManager.setPlayerName(connectionId, event.name);
+
+        this.gameManager.getPlayersIds().forEach((playerId) => {
+          const playerName: Array<{
+            id: string;
+            name: string;
+          }> = [];
+
+          this.gameManager.getPlayersName().forEach((name, id) => {
+            playerName.push({
+              id,
+              name,
+            });
+          });
+
+          this.webSocketManager.sendMessage(
+            playerId,
+            JSON.stringify({
+              type: "syncNames",
+              playersName: playerName,
+            })
+          );
+        });
+
+        console.log("playersNames", this.gameManager.getPlayersName());
       }
     };
 

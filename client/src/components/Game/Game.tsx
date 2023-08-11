@@ -6,6 +6,10 @@ import WebSocketManager from "@/lib/WebSocketManager";
 import { useEffect, useState } from "react";
 
 export default function Game() {
+  const [name, setName] = useState("");
+
+  const [isSumitted, setIsSubmitted] = useState(false);
+
   const [gameManager] = useState(new GameManager());
 
   const [webSocketManager] = useState(
@@ -25,5 +29,40 @@ export default function Game() {
     };
   }, [eventManager]);
 
-  return <></>;
+  const handleSubmit = () => {
+    eventManager.sendName(name);
+    setIsSubmitted(true);
+  };
+
+  return (
+    <>
+      {!isSumitted && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <h1>Home</h1>
+          <p>Enter your name</p>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <button
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            Submit
+          </button>
+        </div>
+      )}
+    </>
+  );
 }

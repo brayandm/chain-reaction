@@ -20,6 +20,14 @@ type whoPlay = {
   playerId: string;
 };
 
+type syncNames = {
+  type: "syncNames";
+  playersName: {
+    id: string;
+    name: string;
+  }[];
+};
+
 class EventManager {
   private gameManager: GameManager;
   private webSocketManager: WebSocketManager;
@@ -31,7 +39,11 @@ class EventManager {
 
   public start() {
     const onMessage = (message: string) => {
-      const event = JSON.parse(message) as CreatePlayer | syncBoard | whoPlay;
+      const event = JSON.parse(message) as
+        | CreatePlayer
+        | syncBoard
+        | whoPlay
+        | syncNames;
 
       if (event.type === "createPlayer") {
         this.gameManager.createPlayer(event.id, event.color, event.isMe);
@@ -44,6 +56,11 @@ class EventManager {
 
       if (event.type === "whoPlay") {
         this.gameManager.setCurrentPlayer(event.playerId);
+      }
+
+      if (event.type === "syncNames") {
+        console.log(event.playersName);
+        this.gameManager.setPlayersName(event.playersName);
       }
 
       console.log(event);
@@ -79,6 +96,15 @@ class EventManager {
   }
 
   public stop() {}
+
+  public sendName(name: string) {
+    this.webSocketManager.sendMessage(
+      JSON.stringify({
+        type: "setName",
+        name: name,
+      }),
+    );
+  }
 }
 
 export default EventManager;

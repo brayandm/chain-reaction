@@ -9,6 +9,7 @@ class GameManager {
   playerOrder: Array<string> = [];
   isReactioning = false;
   playersTurns: Map<string, number> = new Map();
+  playersName: Map<string, string> = new Map();
   reactionCallback: () => void = () => {
     return;
   };
@@ -88,6 +89,10 @@ class GameManager {
       return this.currentPlayer;
     }
     return "";
+  }
+
+  public setPlayerName(id: string, name: string) {
+    this.playersName.set(id, name);
   }
 
   private nextPlayer() {
@@ -231,7 +236,15 @@ class GameManager {
     return sum;
   }
 
+  public getPlayersName() {
+    return this.playersName;
+  }
+
   public async addBall(x: number, y: number, playerId: string) {
+    if (this.playersName.get(playerId) == undefined) {
+      return false;
+    }
+
     if (this.isReactioning) {
       return false;
     }
