@@ -155,7 +155,7 @@ class GameManager {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         if (cellsTemp[i][j] > 0) {
-          this.cellsOwner[i][j] = this.getCurrentPlayer();
+          this.cellsOwner[i][j] = this.currentPlayer;
         }
         this.cells[i][j] += cellsTemp[i][j];
 
@@ -199,6 +199,7 @@ class GameManager {
       }, 300);
     } else {
       this.isReactioning = false;
+      this.nextPlayer();
     }
   }
 
@@ -229,11 +230,10 @@ class GameManager {
           y,
         },
       ]);
+    } else {
+      this.cellsOwner[x][y] = playerId;
+      this.nextPlayer();
     }
-
-    this.cellsOwner[x][y] = playerId;
-
-    this.nextPlayer();
 
     return true;
   }
