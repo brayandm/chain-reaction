@@ -59,7 +59,6 @@ class EventManager {
       }
 
       if (event.type === "syncNames") {
-        console.log(event.playersName);
         this.gameManager.setPlayersName(event.playersName);
       }
 
@@ -95,7 +94,10 @@ class EventManager {
     this.webSocketManager.setOnOpenConnectionCallback(onOpenConnection);
   }
 
-  public stop() {}
+  public stop() {
+    this.webSocketManager.closeConnection();
+    this.gameManager.removeElementsFromDom();
+  }
 
   public sendName(name: string) {
     this.webSocketManager.sendMessage(

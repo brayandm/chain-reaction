@@ -107,7 +107,6 @@ class GameManager {
 
   public setPlayersName(names: Array<{ id: string; name: string }>) {
     this.playersName = names;
-    console.log(this.playersName);
   }
 
   public render(renderStep: number) {
@@ -116,8 +115,6 @@ class GameManager {
     this.playersName.forEach((player) => {
       const playerDom = document.createElement("div");
       playerDom.classList.add("playerName");
-      console.log(this.playerColor.get(player.id));
-      console.log(this.playerColor);
       playerDom.style.backgroundColor = this.playerColor.get(player.id) || "";
       playerDom.innerHTML = player.name;
       this.playerNamesBoard!.appendChild(playerDom);
@@ -193,6 +190,10 @@ class GameManager {
 
   public setCellsOwner(cellsOwner: Array<Array<string>>) {
     this.cellsOwner = cellsOwner;
+  }
+
+  public removeElementsFromDom() {
+    this.boardDom!.remove();
   }
 }
 

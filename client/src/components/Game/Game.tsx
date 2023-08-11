@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export default function Game() {
   const nameRef = useRef<HTMLInputElement>(null);
 
-  const [isSumitted, setIsSubmitted] = useState(false);
+  const divRef = useRef<HTMLDivElement>(null);
 
   const [gameManager] = useState(new GameManager());
 
@@ -32,32 +32,33 @@ export default function Game() {
   const handleSubmit = useCallback(() => {
     const name = nameRef.current?.value || "";
     eventManager.sendName(name);
-    setIsSubmitted(true);
+    if (divRef.current) {
+      divRef.current.innerHTML = "";
+    }
   }, [eventManager]);
 
   return (
     <>
-      {!isSumitted && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
+      <div
+        ref={divRef}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <h1>Home</h1>
+        <p>Enter your name</p>
+        <input type="text" id="name" name="name" ref={nameRef} />
+        <button
+          onClick={() => {
+            handleSubmit();
           }}
         >
-          <h1>Home</h1>
-          <p>Enter your name</p>
-          <input type="text" id="name" name="name" ref={nameRef} />
-          <button
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            Submit
-          </button>
-        </div>
-      )}
+          Submit
+        </button>
+      </div>
     </>
   );
 }
