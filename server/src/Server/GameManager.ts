@@ -8,6 +8,7 @@ class GameManager {
   currentPlayer = "";
   playerOrder: Array<string> = [];
   isReactioning = false;
+  playersTurns: Map<string, number> = new Map();
   reactionCallback: () => void = () => {
     return;
   };
@@ -60,6 +61,8 @@ class GameManager {
     this.players.set(id, color);
     this.playerOrder.push(id);
 
+    this.playersTurns.set(id, 0);
+
     if (this.currentPlayer == "") {
       this.currentPlayer = id;
     }
@@ -73,6 +76,7 @@ class GameManager {
     this.players.delete(id);
     this.playerOrder = this.playerOrder.filter((playerId) => playerId !== id);
     this.deleteBallsFromPlayer(id);
+    this.playersTurns.delete(id);
 
     if (this.currentPlayer == id) {
       this.nextPlayer();
@@ -98,6 +102,13 @@ class GameManager {
           this.playerOrder[(i + 1) % this.playerOrder.length];
         break;
       }
+    }
+
+    if (
+      this.playersTurns.get(this.currentPlayer) > 0 &&
+      this.countPlayerBalls(this.currentPlayer) == 0
+    ) {
+      this.nextPlayer();
     }
   }
 
@@ -206,6 +217,20 @@ class GameManager {
     });
   }
 
+  public countPlayerBalls(playerId: string) {
+    let sum = 0;
+
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.cellsOwner[i][j] == playerId) {
+          sum += this.cells[i][j];
+        }
+      }
+    }
+
+    return sum;
+  }
+
   public async addBall(x: number, y: number, playerId: string) {
     if (this.isReactioning) {
       return false;
@@ -236,6 +261,11 @@ class GameManager {
     } else {
       this.cellsOwner[x][y] = playerId;
     }
+
+    this.playersTurns.set(
+      playerId,
+      (this.playersTurns.get(playerId) as number) + 1
+    );
 
     this.nextPlayer();
 
