@@ -101,7 +101,7 @@ class GameManager {
     }
   }
 
-  private reaction(
+  private async reaction(
     reactions: Array<{
       x: number;
       y: number;
@@ -191,19 +191,22 @@ class GameManager {
         }
       }
     }
+    this.reactionCallback();
 
-    setTimeout(() => {
-      if (reactions2.length > 0) {
-        this.reaction(reactions2);
-        this.reactionCallback();
-      } else {
-        this.isReactioning = false;
-        this.nextPlayer();
-      }
-    }, 300);
+    await new Promise((resolve) => {
+      setTimeout(async () => {
+        if (reactions2.length > 0) {
+          await this.reaction(reactions2);
+          this.reactionCallback();
+        } else {
+          this.isReactioning = false;
+        }
+        resolve(null);
+      }, 300);
+    });
   }
 
-  public addBall(x: number, y: number, playerId: string) {
+  public async addBall(x: number, y: number, playerId: string) {
     if (this.isReactioning) {
       return false;
     }
@@ -224,7 +227,7 @@ class GameManager {
 
     if (this.cells[x][y] > this.maxCellBalls[x][y]) {
       this.isReactioning = true;
-      this.reaction([
+      await this.reaction([
         {
           x,
           y,
@@ -232,8 +235,9 @@ class GameManager {
       ]);
     } else {
       this.cellsOwner[x][y] = playerId;
-      this.nextPlayer();
     }
+
+    this.nextPlayer();
 
     return true;
   }

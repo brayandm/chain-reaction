@@ -19,14 +19,14 @@ class EventManager {
   }
 
   public start() {
-    const onMessage = (connectionId: string, message: string) => {
+    const onMessage = async (connectionId: string, message: string) => {
       console.log(this.gameManager.getPlayerOrder());
       console.log(this.gameManager.getCurrentPlayer());
 
       const event = JSON.parse(message) as ClickCell;
 
       if (event.type === "clickCell") {
-        if (this.gameManager.addBall(event.x, event.y, connectionId)) {
+        if (await this.gameManager.addBall(event.x, event.y, connectionId)) {
           this.gameManager.getPlayersIds().forEach((playerId) => {
             this.webSocketManager.sendMessage(
               playerId,
